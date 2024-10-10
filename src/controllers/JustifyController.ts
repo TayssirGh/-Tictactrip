@@ -1,30 +1,70 @@
 export const justifyText = (text: string): string => {
-    const words = text.split(' ');
-    const justifiedLines: string[] = [];
-    let currentLine = '';
+    const MAXLENGTH : number = 80;
+    let currentLine : string = '';
+    let result : string = '';
+    let word : string = '';
+    let lineLength : number = 0;
+    let i : number = 0;
 
-    for (let word of words) {
-        if ((currentLine + word).length <= 80) {
-            currentLine += word + ' ';
+    if (text.length < MAXLENGTH) {
+        return text;
+    }
+    while (i < text.length) {
+        const char : string = text[i];
+
+        if (char === '\n') {
+            if (lineLength + word.length <= MAXLENGTH) {
+                currentLine += word;
+                word = '';
+            }
+            i++;
+            continue;
+        }
+
+        if (char === ' ') {
+            if (lineLength + word.length + 1 <= MAXLENGTH) {
+                currentLine += word + ' ';
+                lineLength += word.length + 1;
+                word = '';
+            } else {
+                result += justifyLine(currentLine.trim(), MAXLENGTH) + '\n';
+                currentLine = word + ' ';
+                lineLength = word.length + 1;
+                word = '';
+            }
         } else {
-            justifiedLines.push(currentLine.trim());
-            currentLine = word + ' ';
+            word += char;
+        }
+
+        i++;
+    }
+
+    if (word) currentLine += word;
+    if (currentLine) result += justifyLine(currentLine.trim(), MAXLENGTH);
+
+    return result;
+};
+function justifyLine(line: string, targetLength: number): string {
+    let spaceNeeded : number = targetLength - line.length;
+    const words : string[] = line.split(' ');
+    let spaceSlots : number = words.length - 1;
+
+    if (spaceSlots === 0) return line;
+
+    let spacesPerSlot : number = Math.floor(spaceNeeded / spaceSlots);
+    let extraSpaces: number = spaceNeeded % spaceSlots;
+
+    let justifiedLine: string = '';
+    for (let i : number = 0; i < words.length; i++) {
+        justifiedLine += words[i];
+        if (i < spaceSlots) {
+            justifiedLine += ' '.repeat(spacesPerSlot + 1);
+            if (extraSpaces > 0) {
+                justifiedLine += ' ';
+                extraSpaces--;
+            }
         }
     }
-    if (currentLine) justifiedLines.push(currentLine.trim());
+    return justifiedLine;
+}
 
-    return justifiedLines
-        .map(line => {
-            let spacesNeeded = 80 - line.length;
-            let spaceCount = line.split(' ').length - 1;
-            let lineArr = line.split(' ');
-            if (spaceCount > 0) {
-                for (let i = 0; spacesNeeded > 0 && i < lineArr.length - 1; i++) {
-                    lineArr[i] += ' ';
-                    spacesNeeded--;
-                }
-            }
-            return lineArr.join(' ');
-        })
-        .join('\n');
-};
