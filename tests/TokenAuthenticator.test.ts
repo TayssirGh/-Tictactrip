@@ -1,4 +1,4 @@
-import { authenticateToken } from '../src/middlewares/AuthMiddleware';
+import { authenticateToken } from '../src/controllers/TokenAuthenticator';
 import jwt from 'jsonwebtoken';
 
 jest.mock('jsonwebtoken');

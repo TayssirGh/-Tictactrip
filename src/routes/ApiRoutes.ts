@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { justifyText } from '../controllers/JustifyController';
 import { generateToken } from '../controllers/AuthController';
-import { authenticateToken } from '../middlewares/AuthMiddleware';
-import { rateLimiter } from '../middlewares/RateLimiter';
+import { authenticateToken } from '../controllers/TokenAuthenticator';
+import { rateLimiter } from '../controllers/RateLimiter';
 
 const router = Router();
 

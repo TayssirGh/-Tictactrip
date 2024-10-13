@@ -1,4 +1,4 @@
-import { rateLimiter } from '../src/middlewares/RateLimiter';
+import { rateLimiter } from '../src/controllers/RateLimiter';
 import { Request, Response, NextFunction } from 'express';
 
 describe('Rate Limiter Middleware', () => {

@@ -5,6 +5,19 @@ export const justifyText = (text: string): string => {
     let word : string = '';
     let lineLength : number = 0;
     let i : number = 0;
+    let previousChar: string = '';
+
+    const addLine = (justify: boolean) => {
+        if (currentLine.trim().length > 0) {
+            if (justify) {
+                result += justifyLine(currentLine.trim(), MAXLENGTH) + '\n';
+            } else {
+                result += currentLine.trim() + '\n';
+            }
+            currentLine = '';
+            lineLength = 0;
+        }
+    };
 
     if (text.length < MAXLENGTH) {
         return text;
@@ -12,35 +25,48 @@ export const justifyText = (text: string): string => {
     while (i < text.length) {
         const char : string = text[i];
 
-        if (char === '\n') {
-            if (lineLength + word.length <= MAXLENGTH) {
-                currentLine += word;
-                word = '';
-            }
+        if (char === '\n' && previousChar === '\n') {
+            addLine(false);
+            result += '\n';
             i++;
             continue;
         }
 
+        if (char === '\n') {
+            addLine(true);
+            i++;
+            previousChar = char;
+            continue;
+        }
+
         if (char === ' ') {
-            if (lineLength + word.length + 1 <= MAXLENGTH) {
+            if (lineLength + word.length  <= MAXLENGTH) {
                 currentLine += word + ' ';
                 lineLength += word.length + 1;
                 word = '';
             } else {
-                result += justifyLine(currentLine.trim(), MAXLENGTH) + '\n';
-                currentLine = word + ' ';
+                addLine(true);
+                currentLine += word + ' ';
                 lineLength = word.length + 1;
                 word = '';
             }
+        } else if (lineLength == MAXLENGTH) {
+            addLine(false);
         } else {
             word += char;
         }
 
+        previousChar = char;
         i++;
     }
 
-    if (word) currentLine += word;
-    if (currentLine) result += justifyLine(currentLine.trim(), MAXLENGTH);
+    if (word) {
+        currentLine += word;
+    }
+
+    if (currentLine) {
+        addLine(false);
+    }
 
     return result;
 };
